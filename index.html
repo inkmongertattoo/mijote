@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Mijoté</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./apple-touch-icon.svg">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mijoté">
+<meta name="theme-color" id="themeColor" content="#C0673A">
+<meta name="mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── SAISON THEMES ── */
+:root {
+  --primary:#1D9E75;--primary-light:#E1F5EE;--primary-dark:#0F6E56;
+  --primary-text:#fff;
+  --badge-bg:#E1F5EE;--badge-color:#0F6E56;
+}
+[data-saison="chaud"]{
+  --primary:#C0673A;--primary-light:#FAEEE8;--primary-dark:#9C4F2B;
+  --primary-text:#fff;
+  --badge-bg:#FAEEE8;--badge-color:#9C4F2B;
+}
+[data-saison="froid"]{
+  --primary:#4A6FA5;--primary-light:#E8EEF7;--primary-dark:#35527A;
+  --primary-text:#fff;
+  --badge-bg:#E8EEF7;--badge-color:#35527A;
+}
+
+:root{
+  --red:#D94040;--red-light:#FDECEC;
+  --amber:#d4a017;--amber-light:#FEF3DC;
+  --gray-50:#F7F6F3;--gray-100:#EDECEA;--gray-200:#D8D6D2;
+  --gray-300:#C4C2BE;--gray-400:#9E9B96;--gray-600:#5C5A56;--gray-800:#2A2926;
+  --radius:10px;--radius-lg:16px;--slot-h:90px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:"DM Sans",sans-serif;background:var(--gray-50);color:var(--gray-800);min-height:100vh;}
+.page{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+
+/* HEADER */
+.header{margin-bottom:2rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.header-left h1{font-family:"DM Serif Display",serif;font-size:2.4rem;line-height:1;}
+.header-left p{color:var(--gray-400);font-size:14px;margin-top:4px;font-weight:300;}
+.season-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:20px;
+  background:var(--badge-bg);color:var(--badge-color);
+  font-size:13px;font-weight:500;
+  border:1.5px solid currentColor;
+  opacity:0.85;
+  transition:background 0.4s,color 0.4s,border-color 0.4s;
+  cursor:default;user-select:none;
+  margin-top:8px;
+}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius);font-family:"DM Sans",sans-serif;font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all 0.2s;white-space:nowrap;}
+.btn-primary{background:var(--primary);color:var(--primary-text);border-color:var(--primary);}
+.btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark);}
+.btn-outline{background:#fff;color:var(--gray-800);border-color:var(--gray-200);}
+.btn-outline:hover{border-color:var(--gray-400);}.btn-outline:active{background:var(--gray-100);}
+.btn-danger{background:#fff;color:var(--red);border-color:#f0b0b0;}
+.btn-danger:hover{background:var(--red-light);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-large{padding:12px 28px;font-size:15px;}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--gray-100);border-radius:var(--radius);padding:3px;margin-bottom:2rem;width:fit-content;max-width:100%;overflow-x:auto;}
+.tab{padding:7px 18px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;color:var(--gray-400);transition:all 0.15s;border:none;background:none;font-family:"DM Sans",sans-serif;white-space:nowrap;}
+.tab.active{background:#fff;color:var(--gray-800);box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+
+/* WEEK GRID */
+.week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-bottom:2rem;}
+.day-card{background:var(--gray-100);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;gap:4px;padding-bottom:4px;}
+.day-header{background:var(--primary);padding:8px 10px;text-align:center;transition:background 0.4s;}
+.day-name{font-size:10px;font-weight:500;color:rgba(255,255,255,0.95);text-transform:uppercase;letter-spacing:0.07em;}
+
+/* MEAL SLOTS */
+.meal-block{height:var(--slot-h);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;border-radius:8px;margin:0 4px;text-align:center;position:relative;}
+.meal-block.present{background:#fff;}
+.meal-block.present:hover{box-shadow:0 2px 8px rgba(0,0,0,0.07);}
+.meal-type-label{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);margin-bottom:5px;}
+.meal-name{font-size:11px;color:var(--gray-800);line-height:1.4;font-weight:500;text-align:center;width:100%;}
+.meal-name.empty{color:var(--gray-300);font-style:italic;font-weight:400;}
+.star{font-size:10px;}
+.meal-block.absent{background:repeating-linear-gradient(-45deg,#eeece9,#eeece9 4px,#f5f4f1 4px,#f5f4f1 10px);border:1.5px dashed var(--gray-200);}
+.absent-inner{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.absent-x{font-size:18px;color:var(--gray-200);line-height:1;}
+.absent-lbl{font-size:8px;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-300);}
+.swap-btn{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:1px solid var(--gray-200);background:var(--gray-50);color:var(--gray-400);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s,transform 0.3s;font-family:inherit;padding:0;-webkit-tap-highlight-color:transparent;}
+.meal-block.present:hover .swap-btn{opacity:1;}
+@media(hover:none){.meal-block.present .swap-btn{opacity:0.55;}}
+.swap-btn:hover,.swap-btn:active{background:var(--primary-light);border-color:var(--primary);color:var(--primary-dark);}
+.swap-btn:active{transform:rotate(180deg);}
+
+.section-title{font-family:"DM Serif Display",serif;font-size:1.4rem;margin-bottom:1rem;}
+
+/* SHOPPING */
+.shop-single{background:#fff;border:1px solid var(--gray-100);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:2rem;columns:2;column-gap:2rem;}
+.shop-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;cursor:pointer;break-inside:avoid;}
+.shop-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--gray-200);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.12s;}
+.shop-check.checked{background:var(--primary);border-color:var(--primary);}
+.shop-check.checked::after{content:"✓";color:#fff;font-size:10px;font-weight:700;}
+.shop-item.done .shop-item-text{text-decoration:line-through;color:var(--gray-400);}.shop-item:active{opacity:0.7;}
+.shop-item-text{font-size:14px;color:var(--gray-800);line-height:1.4;}
+.export-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:1.5rem;padding:14px 18px;background:var(--primary-light);border-radius:var(--radius-lg);transition:background 0.4s;}
+.export-bar-label{font-size:13px;color:var(--primary-dark);font-weight:500;flex:1;}
+
+/* DB */
+.db-controls{display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center;}
+.search-input{flex:1;min-width:200px;padding:9px 14px;border:1px solid var(--gray-200);border-radius:var(--radius);font-family:"DM Sans",sans-serif;font-size:16px;color:var(--gray-800);background:#fff;outline:none;}
+.search-input:focus{border-color:var(--primary);}
+.recipes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.recipe-card{background:#fff;border:1px solid var(--gray-100);border-radius:var(--radius-lg);padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+.recipe-card-name{font-size:14px;font-weight:500;}
+.tag{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--gray-100);color:var(--gray-600);}
+.tag-fav{background:var(--amber-light);color:#7a4e00;}
+.tag-user{background:var(--primary-light);color:var(--primary-dark);}
+.tag-saison{background:var(--badge-bg);color:var(--badge-color);}
+.recipe-card-actions{display:flex;gap:6px;margin-top:2px;}
+
+/* FORM */
+.recipe-form{background:#fff;border:1.5px dashed var(--gray-200);border-radius:var(--radius-lg);padding:20px;margin-bottom:1.5rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group label{font-size:12px;font-weight:500;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.04em;}
+.form-input{padding:8px 12px;border:1px solid var(--gray-200);border-radius:var(--radius);font-family:"DM Sans",sans-serif;font-size:16px;color:var(--gray-800);background:var(--gray-50);outline:none;}
+.form-input:focus{border-color:var(--primary);background:#fff;}
+.form-textarea{min-height:70px;resize:vertical;}
+.form-title{font-size:15px;font-weight:500;margin-bottom:14px;}
+.checkrow{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;}
+.checkrow input{accent-color:var(--primary);width:16px;height:16px;}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
+
+/* HISTORY */
+.history-section{background:#fff;border:1px solid var(--gray-100);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:2rem;}
+.history-entry{padding:8px 0;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.history-entry:last-child{border-bottom:none;padding-bottom:0;}
+.history-date{font-size:12px;color:var(--gray-400);min-width:100px;}
+.history-meals{font-size:12px;color:var(--gray-600);flex:1;}
+.history-badge{font-size:11px;background:var(--amber-light);color:#7a4e00;border-radius:6px;padding:3px 8px;white-space:nowrap;}
+.confirm-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--red-light);border-radius:var(--radius);border:1px solid #f0b0b0;margin-bottom:1rem;}
+.confirm-bar span{font-size:13px;color:var(--red);flex:1;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,20,18,0.55);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.modal{background:#fff;border-radius:var(--radius-lg);max-width:780px;width:100%;max-height:92vh;overflow-y:auto;padding:2rem 2rem 1.5rem;display:flex;flex-direction:column;gap:1.5rem;}
+.modal-title{font-family:"DM Serif Display",serif;font-size:1.8rem;}
+.modal-sub{font-size:14px;color:var(--gray-400);margin-top:4px;}
+.modal-section-title{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-600);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);}
+.presence-table{width:100%;border-collapse:separate;border-spacing:5px;}
+.presence-table th{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:#fff;background:var(--primary);border-radius:6px;padding:6px 4px;text-align:center;transition:background 0.4s;}
+.presence-table td{padding:0;}
+.pslot{display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 4px;border:1.5px solid var(--gray-100);border-radius:8px;cursor:pointer;transition:background 0.12s,border-color 0.12s;user-select:none;background:#fff;}
+.pslot:hover,.pslot:active{background:var(--primary-light);border-color:var(--primary);}
+.pslot.on{background:var(--primary-light);border-color:var(--primary);}
+.pslot.off{background:var(--gray-50);border-color:var(--gray-100);}
+.pslot-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--gray-200);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;transition:all 0.12s;}
+.pslot.on .pslot-check{background:var(--primary);border-color:var(--primary);}
+.pslot.on .pslot-check::after{content:"✓";color:#fff;font-size:10px;font-weight:700;}
+.pslot-label{font-size:12px;color:var(--gray-600);}
+.pslot.on .pslot-label{color:var(--primary-dark);font-weight:500;}
+.pslot.off .pslot-label{color:#bbb;}
+.shortcuts{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.fav-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.fav-chip{padding:8px 16px;border-radius:20px;border:1.5px solid var(--gray-200);background:#fff;font-size:13px;color:var(--gray-600);cursor:pointer;transition:all 0.12s;font-family:"DM Sans",sans-serif;}
+.fav-chip:hover{border-color:var(--amber);color:var(--gray-800);}
+.fav-chip.selected{background:var(--amber-light);border-color:var(--amber);color:#7a4e00;font-weight:500;}
+.fav-note{font-size:12px;color:var(--gray-400);margin-top:8px;font-style:italic;}
+.modal-footer{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding-top:1rem;border-top:1px solid var(--gray-100);}
+
+
+/* FORCED MEAL SLOT */
+.meal-block.forced{
+  border:2px solid var(--primary);
+  background:#fff;
+}
+.meal-block.forced .meal-type-label{color:var(--primary-dark);}
+.lock-icon{font-size:11px;position:absolute;top:5px;right:5px;opacity:0.5;}
+
+/* FORCED MEALS ROWS */
+.forced-rows{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+.forced-row{display:grid;grid-template-columns:1fr 1fr 2fr auto;gap:8px;align-items:center;}
+.forced-select{padding:8px 10px;border:1px solid var(--gray-200);border-radius:var(--radius);font-family:"DM Sans",sans-serif;font-size:16px;color:var(--gray-800);background:var(--gray-50);outline:none;width:100%;}
+.forced-select:focus{border-color:var(--primary);background:#fff;}
+.forced-remove{width:40px;height:40px;border-radius:50%;border:1px solid #f0b0b0;background:#fff;color:var(--red);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;-webkit-tap-highlight-color:transparent;}.forced-remove:active{background:var(--red-light);}
+.forced-remove:hover{background:var(--red-light);}
+.add-forced-btn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 14px;border-radius:var(--radius);border:1.5px dashed var(--gray-200);background:#fff;font-family:"DM Sans",sans-serif;font-size:13px;color:var(--gray-600);cursor:pointer;transition:all 0.12s;}
+.add-forced-btn:hover{border-color:var(--primary);color:var(--primary-dark);}
+@media(max-width:600px){.forced-row{grid-template-columns:1fr 1fr;gap:6px;}.forced-row .forced-select:nth-child(3){grid-column:1/3;}.forced-remove{grid-column:2/3;justify-self:end;}}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gray-800);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;transition:transform 0.3s;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+@media(max-width:1024px) and (min-width:769px){.week-grid{grid-template-columns:repeat(4,1fr);}:root{--slot-h:84px;}}
+@media(max-width:768px) and (min-width:481px){.page{padding:1.25rem 1rem 3rem;}.week-grid{grid-template-columns:repeat(3,1fr);gap:6px;}:root{--slot-h:80px;}.header-left h1{font-size:2rem;}.shop-single{columns:1;}.form-row{grid-template-columns:1fr;}}
+@media(max-width:480px){.page{padding:1rem 0.75rem 3rem;}.week-grid{grid-template-columns:repeat(2,1fr);gap:5px;}:root{--slot-h:72px;}.header-left h1{font-size:1.8rem;}.shop-single{columns:1;}.form-row{grid-template-columns:1fr;}}
+@media print{body{background:#fff;}.no-print{display:none!important;}.page{padding:0;max-width:100%;}.week-grid{grid-template-columns:repeat(7,1fr);}.shop-single{columns:3;}.day-header{background:var(--primary)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.meal-block.present{background:#fff!important;}.meal-block.absent{background:#eeece9!important;}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header no-print">
+    <div class="header-left">
+      <h1>Mijoté</h1>
+      <p>Ce qu'on mange cette semaine</p>
+      <div class="season-badge" id="seasonBadge"></div>
+    </div>
+    <button class="btn btn-outline" onclick="openModal()">⚙ Configurer &amp; générer</button>
+  </div>
+  <div class="tabs no-print">
+    <button class="tab active" onclick="showTab('planner')" id="tab-planner">Planning</button>
+    <button class="tab" onclick="showTab('shopping')" id="tab-shopping">Courses</button>
+    <button class="tab" onclick="showTab('db')" id="tab-db">Recettes</button>
+    <button class="tab" onclick="showTab('history')" id="tab-history">Historique</button>
+  </div>
+
+  <div id="tab-content-planner"><div class="week-grid" id="weekGrid"></div></div>
+
+  <div id="tab-content-shopping" style="display:none;">
+    <div id="exportBar" class="export-bar no-print" style="display:none;">
+      <span class="export-bar-label">Liste de courses prête</span>
+      <button class="btn btn-outline btn-sm" onclick="copyShoppingList()">📋 Copier</button>
+      <button class="btn btn-outline btn-sm" onclick="downloadTxt()">⬇ .txt</button>
+      <button class="btn btn-primary btn-sm" onclick="window.print()">🖨 Imprimer</button>
+    </div>
+    <div class="section-title">Liste de courses</div>
+    <div id="shoppingList"><p style="color:var(--gray-400);font-size:14px;">Générez un planning pour obtenir la liste de courses.</p></div>
+  </div>
+
+  <div id="tab-content-db" style="display:none;">
+    <div class="section-title">Base de recettes</div>
+    <div class="recipe-form no-print" id="recipeForm" style="display:none;">
+      <div class="form-title" id="formTitle">Nouvelle recette</div>
+      <input type="hidden" id="editId" value="" />
+      <div class="form-row">
+        <div class="form-group"><label>Nom *</label><input class="form-input" id="rName" placeholder="Poulet rôti…"/></div>
+        <div class="form-group"><label>Protéine</label><select class="form-input" id="rProtein"><option value="viande-blanche">Viande blanche</option><option value="viande-rouge">Viande rouge</option><option value="poisson">Poisson</option><option value="végé">Végétarien</option><option value="œufs">Oeufs</option><option value="légumineuses">Légumineuses</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Temps</label><select class="form-input" id="rTime"><option value="rapide">Rapide</option><option value="moyen">Moyen</option><option value="long">Long</option></select></div>
+        <div class="form-group"><label>Famille culinaire</label><select class="form-input" id="rFamily"><option value="neutre">Neutre</option><option value="montagnard">Montagnard</option><option value="épicé">Épicé</option><option value="asiatique">Asiatique</option><option value="méditerranéen">Méditerranéen</option><option value="pâtes-riz">Pâtes / riz</option><option value="soupe">Soupe</option><option value="salade">Salade</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Féculents ?</label><select class="form-input" id="rStarchy"><option value="non">Non</option><option value="oui">Oui</option></select></div>
+        <div class="form-group"><label>Saison</label><select class="form-input" id="rSaison"><option value="neutre">Toute l'année</option><option value="printemps">Printemps</option><option value="ete">Été</option><option value="automne">Automne</option><option value="hiver">Hiver</option></select></div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px;"><label>Ingrédients (virgules)</label><textarea class="form-input form-textarea" id="rIngredients" placeholder="poulet, tomates, ail…"></textarea></div>
+      <div class="form-group" style="margin-bottom:14px;"><label>Tags libres</label><input class="form-input" id="rTags" placeholder="hiver, festif…"/></div>
+      <div style="display:flex;gap:20px;margin-bottom:14px;background:var(--gray-50);border-radius:var(--radius);padding:12px 14px;align-items:center;flex-wrap:wrap;">
+        <label class="checkrow"><input type="checkbox" id="rFav"> ⭐ Coup de cœur</label>
+        <span style="width:1px;height:16px;background:var(--gray-200);"></span>
+        <span style="font-size:12px;font-weight:500;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.04em;">Servi le</span>
+        <label class="checkrow"><input type="checkbox" id="rMidiOnly"> Midi</label>
+        <label class="checkrow"><input type="checkbox" id="rSoirOnly"> Soir</label>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-outline btn-sm" onclick="closeForm()">Annuler</button>
+        <button class="btn btn-primary btn-sm" onclick="saveRecipe()">Enregistrer</button>
+      </div>
+    </div>
+    <div class="db-controls no-print">
+      <input class="search-input" id="dbSearch" placeholder="Rechercher…" oninput="renderDB()"/>
+      <button class="btn btn-primary btn-sm" onclick="openAddForm()">+ Ajouter</button>
+    </div>
+    <div class="recipes-grid" id="recipesGrid"></div>
+  </div>
+
+  <div id="tab-content-history" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px;">
+      <div class="section-title" style="margin-bottom:0;">Historique des semaines</div>
+      <button class="btn btn-danger btn-sm no-print" onclick="askClearHistory()">Effacer</button>
+    </div>
+    <div class="confirm-bar no-print" id="confirmBar" style="display:none;">
+      <span>Effacer tout l'historique ?</span>
+      <button class="btn btn-danger btn-sm" onclick="doCleanHistory()">Confirmer</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('confirmBar').style.display='none'">Annuler</button>
+    </div>
+    <div class="history-section" id="historyList"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" style="display:none;">
+  <div class="modal">
+    <div>
+      <div class="modal-title">Configurer ma semaine</div>
+      <div class="modal-sub">Cochez les repas que vous souhaitez planifier.</div>
+    </div>
+    <div>
+      <div class="modal-section-title">Présence à table</div>
+      <div class="shortcuts no-print">
+        <button class="btn btn-outline btn-sm" onclick="checkAll()">Tout cocher</button>
+        <button class="btn btn-outline btn-sm" onclick="uncheckAll()">Tout décocher</button>
+      </div>
+      <table class="presence-table" id="presenceTable"></table>
+    </div>
+    <div>
+      <div class="modal-section-title">Repas imposés</div>
+      <div class="forced-rows" id="forcedRows"></div>
+      <button class="add-forced-btn" onclick="addForcedRow()">+ Ajouter un repas imposé</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Fermer</button>
+      <button class="btn btn-primary btn-large" onclick="generate()">⟳ Générer ma semaine</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DAYS=["Samedi","Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi"];
+const MT=["déjeuner","dîner"];
+const DB_VERSION=6;
+
+function getSaison(){
+  var m=new Date().getMonth()+1;
+  // Printemps-Été : avril à septembre
+  if(m>=4&&m<=9)return{key:"chaud",icon:"☀️",label:"Printemps — Été",saisons:["printemps","ete"]};
+  // Automne-Hiver : octobre à mars
+  return{key:"froid",icon:"❄️",label:"Automne — Hiver",saisons:["automne","hiver"]};
+}
+function applyTheme(){
+  var s=getSaison();
+  document.documentElement.setAttribute("data-saison",s.key);
+  var badge=document.getElementById("seasonBadge");
+  if(badge)badge.textContent=s.icon+" "+s.label;
+}
+
+function recipeMatchesSaison(r){
+  if(!r.saison||r.saison==="neutre")return true;
+  var s=getSaison();
+  return s.saisons.indexOf(r.saison)>=0;
+}
+const DEFAULT_RECIPES=[{"id": 1, "name": "Poké bowl", "protein": "poisson", "time": "moyen", "family": "neutre", "starchy": false, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["saumon", "riz à sushi", "avocat", "concombre", "mangue", "sauce soja"], "tags": ["neutre"], "saison": "neutre"}, {"id": 2, "name": "Onigiri thon", "protein": "poisson", "time": "rapide", "family": "asiatique", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["riz à sushi", "thon en boîte", "mayonnaise"], "tags": ["neutre"], "saison": "neutre"}, {"id": 3, "name": "Pâtes bolognaises", "protein": "viande-rouge", "time": "moyen", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâtes", "viande hachée", "sauce bolognaise"], "tags": ["neutre"], "saison": "neutre"}, {"id": 4, "name": "Pâtes carbonara", "protein": "viande-rouge", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâtes", "lardons", "œufs", "parmesan"], "tags": ["neutre"], "saison": "neutre"}, {"id": 5, "name": "Pâtes au saumon", "protein": "poisson", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâtes", "saumon fumé", "crème fraîche"], "tags": ["neutre"], "saison": "neutre"}, {"id": 6, "name": "Pâtes poulet champignons", "protein": "viande-blanche", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâtes", "blancs de poulet", "champignons", "crème fraîche"], "tags": ["neutre"], "saison": "neutre"}, {"id": 7, "name": "Pâtes pesto tomates", "protein": "végé", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâtes", "pesto", "tomates cerises"], "tags": ["neutre"], "saison": "neutre"}, {"id": 8, "name": "Raviolis", "protein": "végé", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["raviolis frais"], "tags": ["neutre"], "saison": "neutre"}, {"id": 9, "name": "Raviolis à la tomate", "protein": "végé", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["raviolis (boite)"], "tags": ["neutre"], "saison": "neutre"}, {"id": 10, "name": "Lasagnes", "protein": "viande-rouge", "time": "long", "family": "méditerranéen", "starchy": true, "fav": true, "midiOnly": false, "soirOnly": true, "ingredients": ["viande hachée", "feuilles de lasagnes", "tomates concassées", "béchamel", "gruyère"], "tags": ["neutre"], "saison": "neutre"}, {"id": 11, "name": "Cordons bleus petits pois", "protein": "viande-blanche", "time": "rapide", "family": "neutre", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["cordons bleus", "petits pois"], "tags": ["neutre"], "saison": "neutre"}, {"id": 12, "name": "Cordons bleus purée", "protein": "viande-blanche", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["cordons bleus", "purée de pommes de terre", "lait"], "tags": ["neutre"], "saison": "neutre"}, {"id": 13, "name": "Steak haché haricots verts", "protein": "viande-rouge", "time": "rapide", "family": "neutre", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["steak haché", "haricots verts"], "tags": ["neutre"], "saison": "neutre"}, {"id": 14, "name": "Steak haché purée", "protein": "viande-rouge", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["steak haché", "purée de pommes de terre", "lait"], "tags": ["neutre"], "saison": "neutre"}, {"id": 15, "name": "Steak haché pâtes", "protein": "viande-rouge", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["steak haché", "pâtes"], "tags": ["neutre"], "saison": "neutre"}, {"id": 16, "name": "Fajitas poulet", "protein": "viande-blanche", "time": "rapide", "family": "épicé", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["Poulet", "bœuf", "tortillas", "sauce", "gruyère", "avocat", "guacamole", "tomates", "oignons"], "tags": ["neutre"], "saison": "neutre"}, {"id": 17, "name": "Croques monsieur", "protein": "végé", "time": "rapide", "family": "neutre", "starchy": true, "fav": true, "midiOnly": true, "soirOnly": true, "ingredients": ["pain de mie", "jambon", "gruyère râpé", "béchamel"], "tags": ["neutre"], "saison": "neutre"}, {"id": 18, "name": "Quiche Lorraine", "protein": "végé", "time": "moyen", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâte brisée", "lardons", "œufs", "crème", "gruyère"], "tags": ["neutre"], "saison": "neutre"}, {"id": 19, "name": "Tarte à la tomate", "protein": "végé", "time": "moyen", "family": "méditerranéen", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâte feuilletée", "tomates", "moutarde", "mozzarella"], "tags": [], "saison": "ete"}, {"id": 20, "name": "Tarte aux poireaux", "protein": "végé", "time": "moyen", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâte brisée", "poireaux", "crème", "gruyère", "œufs"], "tags": ["neutre"], "saison": "neutre"}, {"id": 21, "name": "Flamekuche", "protein": "végé", "time": "moyen", "family": "neutre", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["pâte fine", "lardons", "oignon", "crème fraîche"], "tags": ["neutre"], "saison": "neutre"}, {"id": 22, "name": "Pizza", "protein": "végé", "time": "moyen", "family": "méditerranéen", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["Pizza"], "tags": ["neutre"], "saison": "neutre"}, {"id": 23, "name": "Tchoutchouka", "protein": "œufs", "time": "moyen", "family": "méditerranéen", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["œufs", "ratatouille"], "tags": ["neutre"], "saison": "neutre"}, {"id": 24, "name": "Œufs à la coque mouillettes", "protein": "œufs", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["œufs", "pain"], "tags": ["neutre"], "saison": "neutre"}, {"id": 25, "name": "Omelette nature", "protein": "œufs", "time": "rapide", "family": "neutre", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["œufs"], "tags": ["neutre"], "saison": "neutre"}, {"id": 26, "name": "Omelette fromage", "protein": "œufs", "time": "rapide", "family": "neutre", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["œufs", "gruyère râpé"], "tags": ["neutre"], "saison": "neutre"}, {"id": 27, "name": "Omelette champignons", "protein": "œufs", "time": "rapide", "family": "neutre", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["œufs", "champignons", "crème fraîche"], "tags": ["neutre"], "saison": "neutre"}, {"id": 28, "name": "Galettes jambon œuf", "protein": "œufs", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["galettes de sarrasin", "jambon", "œufs", "gruyère"], "tags": ["neutre"], "saison": "neutre"}, {"id": 29, "name": "Salade de pâtes", "protein": "végé", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pâtes", "jambon", "œufs", "tomates cerises", "gruyère", "maïs"], "tags": [], "saison": "ete"}, {"id": 30, "name": "Saucisses purée", "protein": "viande-rouge", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["Saucisses", "purée de pommes de terre", "lait"], "tags": ["neutre"], "saison": "neutre"}, {"id": 31, "name": "Sauté de porc couscous", "protein": "viande-rouge", "time": "moyen", "family": "épicé", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["sauté de porc", "semoule", "légumes couscous", "épices couscous"], "tags": ["neutre"], "saison": "neutre"}, {"id": 32, "name": "Wrap poulet crudités", "protein": "viande-blanche", "time": "rapide", "family": "neutre", "starchy": true, "fav": true, "midiOnly": true, "soirOnly": true, "ingredients": ["blancs de poulet", "tortillas", "salade", "tomates", "concombre"], "tags": ["neutre"], "saison": "neutre"}, {"id": 33, "name": "Wrap thon avocat", "protein": "poisson", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["thon en boîte", "tortillas", "avocat", "tomates", "salade"], "tags": ["neutre"], "saison": "neutre"}, {"id": 34, "name": "Raclette", "protein": "végé", "time": "rapide", "family": "montagnard", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["Raclette"], "tags": [], "saison": "hiver"}, {"id": 35, "name": "Fondue savoyarde", "protein": "végé", "time": "moyen", "family": "montagnard", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["Fondue"], "tags": [], "saison": "hiver"}, {"id": 36, "name": "Tartiflette", "protein": "végé", "time": "moyen", "family": "montagnard", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["pommes de terre", "reblochon", "lardons", "oignon", "crème fraîche"], "tags": [], "saison": "hiver"}, {"id": 37, "name": "Mont d'Or au four", "protein": "végé", "time": "rapide", "family": "montagnard", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["mont d'or", "pommes de terre", "charcuterie"], "tags": [], "saison": "hiver"}, {"id": 38, "name": "Gratin de chou-fleur poulet", "protein": "viande-blanche", "time": "moyen", "family": "montagnard", "starchy": false, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["chou-fleur", "blancs de poulet", "béchamel", "gruyère râpé"], "tags": ["neutre"], "saison": "neutre"}, {"id": 39, "name": "Brocoli feta poulet", "protein": "viande-blanche", "time": "rapide", "family": "neutre", "starchy": false, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["blancs de poulet", "brocoli", "feta"], "tags": ["neutre"], "saison": "neutre"}, {"id": 40, "name": "Brocoli fraise balsamique poulet", "protein": "viande-blanche", "time": "rapide", "family": "neutre", "starchy": false, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["blancs de poulet", "brocoli", "fraises", "vinaigre balsamique"], "tags": [], "saison": "ete"}, {"id": 41, "name": "Barbecue", "protein": "viande-blanche", "time": "moyen", "family": "neutre", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["Barbecue"], "tags": [], "saison": "ete"}, {"id": 42, "name": "Pavé de saumon poireau riz", "protein": "poisson", "time": "moyen", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pavés de saumon", "poireaux", "riz basmati", "crème fraîche"], "tags": ["neutre"], "saison": "neutre"}, {"id": 43, "name": "Papillote de poisson légumes", "protein": "poisson", "time": "moyen", "family": "neutre", "starchy": false, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["filets de poisson blanc", "julienne de légumes"], "tags": ["neutre"], "saison": "neutre"}, {"id": 44, "name": "Fish & Chips", "protein": "poisson", "time": "moyen", "family": "neutre", "starchy": true, "fav": true, "midiOnly": true, "soirOnly": true, "ingredients": ["Poisson", "frites"], "tags": ["neutre"], "saison": "neutre"}, {"id": 45, "name": "Haricots crevettes", "protein": "poisson", "time": "rapide", "family": "neutre", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["crevettes", "haricots verts"], "tags": ["neutre"], "saison": "neutre"}, {"id": 46, "name": "Nuggets frites", "protein": "viande-blanche", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["Nuggets", "frites"], "tags": ["neutre"], "saison": "neutre"}, {"id": 47, "name": "Nuggets pommes de terre", "protein": "viande-blanche", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["Nuggets", "pommes de terre"], "tags": ["neutre"], "saison": "neutre"}, {"id": 48, "name": "Poissons panés purée", "protein": "poisson", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["Poisson pané", "purée de pommes de terre"], "tags": ["neutre"], "saison": "neutre"}, {"id": 49, "name": "Escalope panée pâtes tomate", "protein": "viande-blanche", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["escalope panée", "pâtes", "sauce tomates"], "tags": ["neutre"], "saison": "neutre"}, {"id": 50, "name": "Burger salade", "protein": "viande-rouge", "time": "moyen", "family": "neutre", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["Burger", "salade"], "tags": ["neutre"], "saison": "neutre"}, {"id": 51, "name": "Burger frites", "protein": "viande-rouge", "time": "moyen", "family": "neutre", "starchy": true, "fav": true, "midiOnly": false, "soirOnly": true, "ingredients": ["Burger", "frites"], "tags": ["neutre"], "saison": "neutre"}, {"id": 52, "name": "Hot dog", "protein": "viande-rouge", "time": "rapide", "family": "neutre", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["saucisses knack", "pain hot dog", "moutarde", "ketchup", "oignon frit"], "tags": ["neutre"], "saison": "neutre"}, {"id": 53, "name": "Poulet rôti pommes de terre", "protein": "viande-blanche", "time": "moyen", "family": "neutre", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["poulet entier", "pommes de terre", "sachet poulet"], "tags": ["neutre"], "saison": "neutre"}, {"id": 54, "name": "Gnocchis poulet", "protein": "viande-blanche", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["gnocchis", "blancs de poulet", "crème fraîche"], "tags": ["neutre"], "saison": "neutre"}, {"id": 55, "name": "Gnocchis chorizo", "protein": "viande-rouge", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["gnocchis", "chorizo", "crème fraîche"], "tags": ["neutre"], "saison": "neutre"}, {"id": 56, "name": "Gnocchis moutarde", "protein": "viande-blanche", "time": "rapide", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["gnocchis", "moutarde à l'ancienne", "crème fraîche"], "tags": ["neutre"], "saison": "neutre"}, {"id": 57, "name": "Rôti de porc légumes", "protein": "viande-rouge", "time": "long", "family": "neutre", "starchy": false, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["rôti de porc", "poelée de légumes"], "tags": ["neutre"], "saison": "neutre"}, {"id": 58, "name": "Bœuf légumes", "protein": "viande-rouge", "time": "long", "family": "neutre", "starchy": false, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["Pièce de bœuf", "poelée de légumes"], "tags": ["neutre"], "saison": "neutre"}, {"id": 59, "name": "Chili con carne", "protein": "viande-rouge", "time": "moyen", "family": "épicé", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["viande hachée", "haricots rouges", "tomates concassées", "poivrons", "riz"], "tags": ["neutre"], "saison": "neutre"}, {"id": 60, "name": "Tomates farcies riz", "protein": "viande-rouge", "time": "moyen", "family": "méditerranéen", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["tomates", "viande hachée", "riz", "oignon"], "tags": [], "saison": "ete"}, {"id": 61, "name": "Risotto", "protein": "végé", "time": "moyen", "family": "pâtes-riz", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["Risotto"], "tags": ["neutre"], "saison": "neutre"}, {"id": 62, "name": "Paëlla", "protein": "poisson", "time": "long", "family": "méditerranéen", "starchy": true, "fav": false, "midiOnly": false, "soirOnly": true, "ingredients": ["Paëlla"], "tags": ["neutre"], "saison": "neutre"}, {"id": 63, "name": "Bruschetta jambon mozza", "protein": "végé", "time": "rapide", "family": "méditerranéen", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pain ciabatta", "jambon", "mozzarella", "tomates cerises", "basilic", "huile d'olive"], "tags": [], "saison": "ete"}, {"id": 64, "name": "Bruschetta tomate basilic", "protein": "végé", "time": "rapide", "family": "méditerranéen", "starchy": true, "fav": false, "midiOnly": true, "soirOnly": true, "ingredients": ["pain ciabatta", "tomates", "basilic", "ail", "huile d'olive"], "tags": [], "saison": "ete"}];
+
+function initRecipes(){
+  var stored=localStorage.getItem("mp_recipes");
+  var ver=parseInt(localStorage.getItem("mp_db_version")||"0");
+  if(!stored||ver<DB_VERSION){
+    localStorage.setItem("mp_recipes",JSON.stringify(DEFAULT_RECIPES));
+    localStorage.setItem("mp_db_version",String(DB_VERSION));
+    return DEFAULT_RECIPES.map(function(r){return Object.assign({},r);});
+  }
+  return JSON.parse(stored);
+}
+
+var recipes=initRecipes();
+var currentWeek=JSON.parse(localStorage.getItem("mp_week")||"null")||null;
+var presence=JSON.parse(localStorage.getItem("mp_presence")||"null")||defaultPresence();
+var weekHistory=JSON.parse(localStorage.getItem("mp_history")||"[]");
+var forcedMeals=[]; // [{day, mt, recipeId}]
+
+function defaultPresence(){var p={};DAYS.forEach(function(d){p[d]={};MT.forEach(function(m){p[d][m]=true;});});return p;}
+function save(){
+  localStorage.setItem("mp_recipes",JSON.stringify(recipes));
+  localStorage.setItem("mp_db_version",String(DB_VERSION));
+  localStorage.setItem("mp_week",JSON.stringify(currentWeek));
+  localStorage.setItem("mp_presence",JSON.stringify(presence));
+  localStorage.setItem("mp_history",JSON.stringify(weekHistory));
+}
+
+function openModal(){buildPresenceTable();buildForcedRows();document.getElementById("modalOverlay").style.display="flex";}
+function closeModal(){document.getElementById("modalOverlay").style.display="none";}
+
+function buildPresenceTable(){
+  var t=document.getElementById("presenceTable");
+  var h="<thead><tr><th style=\"width:50px;background:transparent;\"></th>"+DAYS.map(function(d){return"<th>"+d.slice(0,3)+"</th>";}).join("")+"</tr></thead><tbody>";
+  MT.forEach(function(mt){
+    h+="<tr><td style=\"font-size:11px;font-weight:500;color:var(--gray-400);padding:0 8px 0 0;white-space:nowrap;text-align:right;vertical-align:middle;\">"+(mt==="déjeuner"?"Midi":"Soir")+"</td>";
+    DAYS.forEach(function(d){
+      var on=presence[d]&&presence[d][mt]!==false;
+      h+="<td><div class=\"pslot "+(on?"on":"off")+"\" id=\"ps-"+d+"-"+mt+"\" onclick=\"togglePresence('"+d+"','"+mt+"')\" ><div class=\"pslot-check\"></div><div class=\"pslot-label\">"+(on?"✓":"–")+"</div></div></td>";
+    });
+    h+="</tr>";
+  });
+  t.innerHTML=h+"</tbody>";
+}
+function togglePresence(d,mt){
+  if(!presence[d])presence[d]={};
+  presence[d][mt]=!presence[d][mt];
+  var el=document.getElementById("ps-"+d+"-"+mt),on=presence[d][mt];
+  el.className="pslot "+(on?"on":"off");
+  el.querySelector(".pslot-label").textContent=on?"✓":"–";
+  save();
+}
+function checkAll(){DAYS.forEach(function(d){MT.forEach(function(m){presence[d][m]=true;});});buildPresenceTable();save();}
+function uncheckAll(){DAYS.forEach(function(d){MT.forEach(function(m){presence[d][m]=false;});});buildPresenceTable();save();}
+
+function buildForcedRows(){
+  var container=document.getElementById("forcedRows");
+  container.innerHTML="";
+  forcedMeals.forEach(function(fm,idx){renderForcedRow(idx,fm);});
+}
+function renderForcedRow(idx,fm){
+  var container=document.getElementById("forcedRows");
+  var div=document.createElement("div");
+  div.className="forced-row";
+  div.id="frow-"+idx;
+
+  // Jour select
+  var selDay=document.createElement("select");selDay.className="forced-select";
+  DAYS.forEach(function(d){var o=document.createElement("option");o.value=d;o.textContent=d;if(d===fm.day)o.selected=true;selDay.appendChild(o);});
+  selDay.onchange=function(){forcedMeals[idx].day=this.value;refreshRecipeSelect(idx);};
+
+  // Moment select
+  var selMt=document.createElement("select");selMt.className="forced-select";
+  [{v:"déjeuner",l:"Midi"},{v:"dîner",l:"Soir"}].forEach(function(m){var o=document.createElement("option");o.value=m.v;o.textContent=m.l;if(m.v===fm.mt)o.selected=true;selMt.appendChild(o);});
+  selMt.onchange=function(){forcedMeals[idx].mt=this.value;refreshRecipeSelect(idx);};
+
+  // Recipe select
+  var selR=document.createElement("select");selR.className="forced-select";selR.id="frow-recipe-"+idx;
+  buildRecipeOptions(selR,fm.mt,fm.recipeId);
+  selR.onchange=function(){forcedMeals[idx].recipeId=parseInt(this.value)||null;};
+
+  // Remove btn
+  var btn=document.createElement("button");btn.className="forced-remove";btn.textContent="×";btn.title="Supprimer";
+  btn.onclick=function(){forcedMeals.splice(idx,1);buildForcedRows();};
+
+  div.appendChild(selDay);div.appendChild(selMt);div.appendChild(selR);div.appendChild(btn);
+  container.appendChild(div);
+}
+function buildRecipeOptions(sel,mt,selectedId){
+  sel.innerHTML="";
+  var empty=document.createElement("option");empty.value="";empty.textContent="— Choisir une recette —";sel.appendChild(empty);
+  var pool=recipes.slice().sort(function(a,b){return a.name.localeCompare(b.name,"fr");});
+  pool.forEach(function(r){var o=document.createElement("option");o.value=r.id;o.textContent=(r.fav?"⭐ ":"")+r.name;if(r.id===selectedId)o.selected=true;sel.appendChild(o);});
+}
+function refreshRecipeSelect(idx){
+  var fm=forcedMeals[idx];
+  var sel=document.getElementById("frow-recipe-"+idx);
+  if(!sel)return;
+  buildRecipeOptions(sel,fm.mt,fm.recipeId);
+  fm.recipeId=null;
+}
+function addForcedRow(){
+  forcedMeals.push({day:DAYS[0],mt:"déjeuner",recipeId:null});
+  buildForcedRows();
+}
+
+function generate(){closeModal();generateWeek();}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+function generateWeek(){
+  var recentIds={};
+  weekHistory.slice(-2).forEach(function(w){w.meals.forEach(function(m){recentIds[m.recipeId]=true;});});
+  var activeSlots=[];
+  DAYS.forEach(function(d){MT.forEach(function(mt){if(presence[d]&&presence[d][mt])activeSlots.push({d:d,mt:mt});});});
+  // Place forced meals first
+  var forcedMap={};
+  forcedMeals.forEach(function(fm){
+    if(fm.recipeId){
+      var key=fm.day+"|"+fm.mt;
+      forcedMap[key]=fm.recipeId;
+    }
+  });
+  var week={};DAYS.forEach(function(d){week[d]={};MT.forEach(function(m){week[d][m]=null;});});
+  var usedIds=Object.assign({},recentIds);
+  var ds={};DAYS.forEach(function(d){ds[d]={starchy:false,families:{}};});
+  var fc=0,lc=0,rc=0;
+  function fits(r,d,mt){
+    if(mt==="déjeuner"&&!r.midiOnly)return false;
+    if(mt==="dîner"&&!r.soirOnly)return false;
+    if(!recipeMatchesSaison(r))return false;
+    if(usedIds[r.id])return false;
+    if(r.starchy&&ds[d].starchy)return false;
+    if(r.family!=="neutre"&&ds[d].families[r.family])return false;
+    if(r.protein==="viande-rouge"&&rc>=2)return false;
+    return true;
+  }
+  function ps(r){var s=0;if(r.protein==="poisson"&&fc<2)s+=3;if(r.protein==="légumineuses"&&lc<1)s+=2;return s;}
+  DAYS.forEach(function(d){
+    MT.forEach(function(mt){
+      if(!presence[d]||!presence[d][mt])return;
+      var forcedId=forcedMap[d+"|"+mt]||null;
+      var chosen=null;
+      if(forcedId){
+        chosen=recipes.filter(function(r){return r.id===forcedId;})[0]||null;
+      }
+      if(!chosen){
+        var pool=recipes.filter(function(r){return fits(r,d,mt);});
+        if(pool.length<2){
+          pool=recipes.filter(function(r){
+            if(mt==="déjeuner"&&!r.midiOnly)return false;
+            if(mt==="dîner"&&!r.soirOnly)return false;
+            if(!recipeMatchesSaison(r))return false;
+            if(r.starchy&&ds[d].starchy)return false;
+            if(r.family!=="neutre"&&ds[d].families[r.family])return false;
+            if(r.protein==="viande-rouge"&&rc>=2)return false;
+            var used=false;DAYS.forEach(function(dd){MT.forEach(function(mm){if(week[dd][mm]&&week[dd][mm].recipeId===r.id)used=true;});});
+            return !used;
+          });
+        }
+        if(!pool.length)return;
+        var up=[];DAYS.forEach(function(dd){if(week[dd][mt])up.push(week[dd][mt].protein);});
+        var rot=pool.filter(function(r){return up.slice(-2).indexOf(r.protein)<0;});
+        var cands=rot.length?rot:pool;
+        cands=cands.slice().sort(function(a,b){return ps(b)-ps(a);});
+        var topS=ps(cands[0]),tops=cands.filter(function(r){return ps(r)>=topS-1;});
+        chosen=tops[Math.floor(Math.random()*tops.length)];
+      }
+      week[d][mt]={recipeId:chosen.id,name:chosen.name,protein:chosen.protein,family:chosen.family,starchy:chosen.starchy,fav:chosen.fav};
+      usedIds[chosen.id]=true;ds[d].starchy=ds[d].starchy||chosen.starchy;
+      if(chosen.family!=="neutre")ds[d].families[chosen.family]=true;
+      if(chosen.protein==="poisson")fc++;if(chosen.protein==="légumineuses")lc++;if(chosen.protein==="viande-rouge")rc++;
+    });
+  });
+  var entry={date:new Date().toLocaleDateString("fr-FR"),meals:[]};
+  DAYS.forEach(function(d){MT.forEach(function(mt){if(week[d][mt])entry.meals.push({recipeId:week[d][mt].recipeId,name:week[d][mt].name});});});
+  weekHistory.push(entry);if(weekHistory.length>10)weekHistory.shift();
+  currentWeek={week:week};save();renderWeek();buildShoppingList();
+  showToast("Semaine générée — 🐟×"+fc+" 🥦×"+lc+" 🥩×"+rc);
+}
+
+function swapMeal(d,mt){
+  if(!currentWeek)return;
+  var curId=currentWeek.week[d]&&currentWeek.week[d][mt]?currentWeek.week[d][mt].recipeId:null;
+  var usedIds={};
+  DAYS.forEach(function(dd){MT.forEach(function(t){var m=currentWeek.week[dd][t];if(m&&!(dd===d&&t===mt))usedIds[m.recipeId]=true;});});
+  var dayStarchy=false;MT.forEach(function(t){if(t!==mt&&currentWeek.week[d][t]&&currentWeek.week[d][t].starchy)dayStarchy=true;});
+  var dayFam={};MT.forEach(function(t){if(t!==mt&&currentWeek.week[d][t]){var f=currentWeek.week[d][t].family;if(f&&f!=="neutre")dayFam[f]=true;}});
+  var up=[];DAYS.forEach(function(dd){if(dd!==d&&currentWeek.week[dd][mt])up.push(currentWeek.week[dd][mt].protein);});
+  var pool=recipes.filter(function(r){
+    if(mt==="déjeuner"&&!r.midiOnly)return false;if(mt==="dîner"&&!r.soirOnly)return false;
+    if(!recipeMatchesSaison(r))return false;
+    if(usedIds[r.id]||r.id===curId)return false;
+    if(r.starchy&&dayStarchy)return false;if(r.family!=="neutre"&&dayFam[r.family])return false;
+    return true;
+  });
+  if(!pool.length)pool=recipes.filter(function(r){
+    if(mt==="déjeuner"&&!r.midiOnly)return false;if(mt==="dîner"&&!r.soirOnly)return false;
+    if(!recipeMatchesSaison(r))return false;return r.id!==curId;
+  });
+  if(!pool.length){showToast("Aucune alternative");return;}
+  var pref=pool.filter(function(r){return up.slice(-2).indexOf(r.protein)<0;});
+  var cands=pref.length?pref:pool;
+  var chosen=cands[Math.floor(Math.random()*cands.length)];
+  currentWeek.week[d][mt]={recipeId:chosen.id,name:chosen.name,protein:chosen.protein,family:chosen.family,starchy:chosen.starchy,fav:chosen.fav};
+  save();renderWeek();buildShoppingList();showToast("Repas changé !");
+}
+
+function isForcedSlot(d,mt){
+  return forcedMeals.some(function(fm){return fm.day===d&&fm.mt===mt&&fm.recipeId;});
+}
+function renderWeek(){
+  var grid=document.getElementById("weekGrid");
+  if(!currentWeek){grid.innerHTML="<p style=\"color:var(--gray-400);font-size:14px;grid-column:1/-1;padding:2rem 0;text-align:center;\">Appuyez sur Configurer &amp; générer pour démarrer.</p>";return;}
+  grid.innerHTML=DAYS.map(function(d){
+    var slots=MT.map(function(mt){
+      var present=presence[d]&&presence[d][mt]!==false;
+      if(!present)return"<div class=\"meal-block absent\"><div class=\"absent-inner\"><div class=\"absent-x\">✕</div><div class=\"absent-lbl\">"+(mt==="déjeuner"?"Midi":"Soir")+"</div></div></div>";
+      var meal=currentWeek.week[d]?currentWeek.week[d][mt]:null;
+      var star=meal&&meal.fav?"<span class=\"star\">⭐</span> ":"";
+      return"<div class=\"meal-block present"+(isForcedSlot(d,mt)?" forced":"")+"\"><div class=\"meal-type-label\">"+(mt==="déjeuner"?"Midi":"Soir")+"</div><div class=\"meal-name"+(meal?"":" empty")+"\">"+star+(meal?meal.name:"—")+"</div>"+(meal?(isForcedSlot(d,mt)?"<span class=\"lock-icon\">🔒</span>":"<button class=\"swap-btn no-print\" title=\"Changer\" onclick=\"swapMeal('"+d+"','"+mt+"')\" >↺</button>"):"")+"</div>";
+    }).join("");
+    return"<div class=\"day-card\"><div class=\"day-header\"><div class=\"day-name\">"+d+"</div></div>"+slots+"</div>";
+  }).join("");
+}
+
+function buildShoppingList(){
+  if(!currentWeek)return;
+  var items={};
+  DAYS.forEach(function(d){MT.forEach(function(mt){
+    var meal=currentWeek.week[d]?currentWeek.week[d][mt]:null;if(!meal)return;
+    var r=null;for(var i=0;i<recipes.length;i++){if(recipes[i].id===meal.recipeId){r=recipes[i];break;}}
+    if(!r)return;r.ingredients.forEach(function(ing){items[ing]=true;});
+  });});
+  var sorted=Object.keys(items).sort(function(a,b){return a.localeCompare(b,"fr");});
+  var container=document.getElementById("shoppingList");
+  if(!sorted.length){container.innerHTML="<p style=\"color:var(--gray-400);font-size:14px;\">Aucun ingrédient.</p>";return;}
+  container.innerHTML="<div class=\"shop-single\">"+sorted.map(function(item){
+    return"<div class=\"shop-item\" onclick=\"this.classList.toggle('done');this.querySelector('.shop-check').classList.toggle('checked')\"><div class=\"shop-check\"></div><span class=\"shop-item-text\">"+item+"</span></div>";
+  }).join("")+"</div>";
+  document.getElementById("exportBar").style.display="flex";
+}
+
+function getShoppingText(){
+  if(!currentWeek)return"";
+  var items={};
+  DAYS.forEach(function(d){MT.forEach(function(mt){
+    var meal=currentWeek.week[d]?currentWeek.week[d][mt]:null;if(!meal)return;
+    var r=null;for(var i=0;i<recipes.length;i++){if(recipes[i].id===meal.recipeId){r=recipes[i];break;}}
+    if(!r)return;r.ingredients.forEach(function(ing){items[ing]=true;});
+  });});
+  var sorted=Object.keys(items).sort(function(a,b){return a.localeCompare(b,"fr");});
+  var txt="PLANNING & COURSES — "+new Date().toLocaleDateString("fr-FR")+"\n\nPLANNING\n"+"─".repeat(36)+"\n";
+  DAYS.forEach(function(d){txt+=d+"\n";MT.forEach(function(mt){var meal=currentWeek.week[d]?currentWeek.week[d][mt]:null;txt+="  "+(mt==="déjeuner"?"Midi":"Soir")+" : "+(meal?meal.name:"—")+"\n";});});
+  txt+="\nLISTE DE COURSES\n"+"─".repeat(36)+"\n";
+  sorted.forEach(function(i){txt+="  ☐ "+i+"\n";});
+  return txt;
+}
+function copyShoppingList(){navigator.clipboard.writeText(getShoppingText()).then(function(){showToast("Copié !");});}
+function downloadTxt(){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([getShoppingText()],{type:"text/plain;charset=utf-8"}));a.download="courses_"+new Date().toISOString().slice(0,10)+".txt";a.click();}
+
+function openAddForm(){
+  document.getElementById("formTitle").textContent="Nouvelle recette";document.getElementById("editId").value="";
+  ["rName","rIngredients","rTags"].forEach(function(id){document.getElementById(id).value="";});
+  document.getElementById("rProtein").value="viande-blanche";document.getElementById("rTime").value="rapide";
+  document.getElementById("rFamily").value="neutre";document.getElementById("rStarchy").value="non";
+  document.getElementById("rSaison").value="neutre";
+  document.getElementById("rFav").checked=false;document.getElementById("rMidiOnly").checked=true;document.getElementById("rSoirOnly").checked=true;
+  document.getElementById("recipeForm").style.display="block";document.getElementById("recipeForm").scrollIntoView({behavior:"smooth"});
+}
+function openEditForm(id){
+  var r=null;for(var i=0;i<recipes.length;i++){if(recipes[i].id===id){r=recipes[i];break;}}if(!r)return;
+  document.getElementById("formTitle").textContent="Modifier la recette";document.getElementById("editId").value=id;
+  document.getElementById("rName").value=r.name;document.getElementById("rProtein").value=r.protein;
+  document.getElementById("rTime").value=r.time;document.getElementById("rFamily").value=r.family||"neutre";
+  document.getElementById("rStarchy").value=r.starchy?"oui":"non";
+  document.getElementById("rSaison").value=r.saison||"neutre";
+  document.getElementById("rIngredients").value=(r.ingredients||[]).join(", ");
+  document.getElementById("rTags").value=(r.tags||[]).join(", ");
+  document.getElementById("rFav").checked=!!r.fav;document.getElementById("rMidiOnly").checked=!!r.midiOnly;document.getElementById("rSoirOnly").checked=!!r.soirOnly;
+  document.getElementById("recipeForm").style.display="block";document.getElementById("recipeForm").scrollIntoView({behavior:"smooth"});
+}
+function closeForm(){document.getElementById("recipeForm").style.display="none";}
+function saveRecipe(){
+  var name=document.getElementById("rName").value.trim();if(!name){showToast("Le nom est obligatoire");return;}
+  var midi=document.getElementById("rMidiOnly").checked,soir=document.getElementById("rSoirOnly").checked;
+  if(!midi&&!soir){midi=true;soir=true;document.getElementById("rMidiOnly").checked=true;document.getElementById("rSoirOnly").checked=true;}
+  var data={name:name,protein:document.getElementById("rProtein").value,time:document.getElementById("rTime").value,
+    family:document.getElementById("rFamily").value,starchy:document.getElementById("rStarchy").value==="oui",
+    saison:document.getElementById("rSaison").value,
+    fav:document.getElementById("rFav").checked,midiOnly:midi,soirOnly:soir,
+    ingredients:document.getElementById("rIngredients").value.split(",").map(function(s){return s.trim();}).filter(Boolean),
+    tags:document.getElementById("rTags").value.split(",").map(function(s){return s.trim();}).filter(Boolean)};
+  var eid=parseInt(document.getElementById("editId").value||"0");
+  if(eid){for(var i=0;i<recipes.length;i++){if(recipes[i].id===eid){Object.assign(recipes[i],data);break;}}showToast("Recette modifiée !");}
+  else{data.id=Math.max.apply(null,recipes.map(function(r){return r.id;}).concat([0]))+1;recipes.push(data);showToast("Recette ajoutée !");}
+  save();renderDB();closeForm();
+}
+function deleteRecipe(id){recipes=recipes.filter(function(r){return r.id!==id;});save();renderDB();showToast("Supprimée");}
+
+var SAISON_LABELS={neutre:"Toute l'année",printemps:"☀️ Printemps-Été",ete:"☀️ Printemps-Été",automne:"❄️ Automne-Hiver",hiver:"❄️ Automne-Hiver"};
+function renderDB(){
+  var q=(document.getElementById("dbSearch")?document.getElementById("dbSearch").value:"").toLowerCase();
+  var filtered=recipes.filter(function(r){return !q||r.name.toLowerCase().indexOf(q)>=0||(r.ingredients||[]).some(function(i){return i.toLowerCase().indexOf(q)>=0;});});
+  var mt=function(r){if(r.midiOnly&&r.soirOnly)return"midi & soir";if(r.midiOnly)return"midi";if(r.soirOnly)return"soir";return"—";};
+  document.getElementById("recipesGrid").innerHTML=filtered.length?filtered.map(function(r){
+    var saisonTag=r.saison&&r.saison!=="neutre"?"<span class=\"tag tag-saison\">"+(SAISON_LABELS[r.saison]||r.saison)+"</span>":"";
+    return"<div class=\"recipe-card\"><div class=\"recipe-card-name\">"+(r.fav?"⭐ ":"")+r.name+"</div>"
+      +"<div style=\"display:flex;gap:5px;flex-wrap:wrap;\">"
+      +"<span class=\"tag\">"+r.protein+"</span><span class=\"tag\">"+mt(r)+"</span><span class=\"tag\">"+r.time+"</span>"
+      +(r.starchy?"<span class=\"tag\">féculents</span>":"")
+      +(r.fav?"<span class=\"tag tag-fav\">coup de cœur</span>":"")+saisonTag
+      +((r.tags||[]).map(function(t){return"<span class=\"tag tag-user\">"+t+"</span>";}).join(""))
+      +"</div>"
+      +"<div style=\"font-size:11px;color:var(--gray-400);line-height:1.6;\">"+(r.ingredients||[]).slice(0,5).join(", ")+((r.ingredients||[]).length>5?"…":"")+"</div>"
+      +"<div class=\"recipe-card-actions\"><button class=\"btn btn-outline btn-sm\" onclick=\"openEditForm("+r.id+")\">Modifier</button><button class=\"btn btn-danger btn-sm\" onclick=\"deleteRecipe("+r.id+")\">Supprimer</button></div></div>";
+  }).join(""):"<p style=\"color:var(--gray-400);font-size:14px;grid-column:1/-1;\">Aucune recette.</p>";
+}
+
+function renderHistory(){
+  var el=document.getElementById("historyList");
+  if(!weekHistory.length){el.innerHTML="<p style=\"color:var(--gray-400);font-size:14px;\">Aucun historique.</p>";return;}
+  el.innerHTML=weekHistory.slice().reverse().map(function(e){
+    return"<div class=\"history-entry\"><div class=\"history-date\">"+e.date+"</div><div class=\"history-meals\">"+e.meals.slice(0,6).map(function(m){return m.name;}).join(", ")+(e.meals.length>6?"…":"")+"</div><span class=\"history-badge\">"+e.meals.length+" repas</span></div>";
+  }).join("");
+}
+function askClearHistory(){document.getElementById("confirmBar").style.display="flex";}
+function doCleanHistory(){weekHistory=[];save();document.getElementById("confirmBar").style.display="none";renderHistory();showToast("Historique effacé");}
+
+function showTab(name){
+  ["planner","shopping","db","history"].forEach(function(t){
+    document.getElementById("tab-content-"+t).style.display=t===name?"block":"none";
+    var el=document.getElementById("tab-"+t);if(el)el.className="tab"+(t===name?" active":"");
+  });
+  if(name==="db")renderDB();if(name==="history")renderHistory();if(name==="shopping")buildShoppingList();
+}
+function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.className="toast show";setTimeout(function(){t.className="toast";},3000);}
+
+
+// PWA service worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js');
+  });
+}
+applyTheme();
+// Update theme-color meta to match season
+(function(){
+  var s=getSaison();
+  var tc=document.getElementById('themeColor');
+  if(tc) tc.content = s.key==='froid' ? '#4A6FA5' : '#C0673A';
+})();
+
+renderWeek();
+if(currentWeek)buildShoppingList();
+renderDB();
+if(!currentWeek)openModal();
+</script>
+</body>
+</html>
