@@ -1,6 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Background -->
   <rect width="512" height="512" rx="102" fill="#C0673A"/>
-  <text x="256" y="322" font-family="Georgia,serif" font-size="243" font-weight="bold" fill="white" text-anchor="middle">M</text>
-  <circle cx="322" cy="138" r="32" fill="rgba(255,255,255,0.65)"/>
-  <circle cx="389" cy="102" r="23" fill="rgba(255,255,255,0.45)"/>
+
+  <!-- Steam wisps -->
+  <path d="M179 133 Q154 92 179 51" stroke="rgba(255,255,255,0.55)" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M256 133 Q281 92 256 51" stroke="rgba(255,255,255,0.70)" stroke-width="14" fill="none" stroke-linecap="round"/>
+  <path d="M332 133 Q307 92 332 51" stroke="rgba(255,255,255,0.55)" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+  <!-- Pot body -->
+  <rect x="97" y="230" width="317" height="194" rx="20" fill="white" opacity="0.92"/>
+
+  <!-- Pot base/rim -->
+  <rect x="87" y="424" width="337" height="30" rx="10" fill="white" opacity="0.75"/>
+
+  <!-- Left handle -->
+  <rect x="46" y="260" width="46" height="81" rx="15" fill="white" opacity="0.80"/>
+
+  <!-- Right handle -->
+  <rect x="419" y="260" width="46" height="81" rx="15" fill="white" opacity="0.80"/>
+
+  <!-- Lid -->
+  <rect x="113" y="184" width="286" height="51" rx="12" fill="white" opacity="0.88"/>
+
+  <!-- Lid knob -->
+  <rect x="220" y="149" width="71" height="45" rx="12" fill="white" opacity="0.75"/>
 </svg>
